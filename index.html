@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>วงล้อสุ่มรายชื่อง</title>
+  <title>วงล้อสุ่มรายชื่อ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* พื้นหลังไล่สีให้สดใสและลึก */
@@ -29,8 +29,8 @@
     input:checked + .slider:before { transform: translateX(20px); }
     /* ตัวชี้ (Pointer) ที่ด้านบนของล้อ */
     .pointer {
-      position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
-      width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 20px solid #ef4444;
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0; border-left: 22px solid transparent; border-right: 22px solid transparent; border-top: 36px solid #ef4444;
       filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
       z-index: 10;
     }
@@ -44,7 +44,7 @@
     <header class="mb-8">
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          <h1 class="text-3xl md:text-4xl font-bold tracking-tight">วงล้อสุ่มรายชื่อ By Tonnu.</h1>
+          <h1 class="text-3xl md:text-4xl font-bold tracking-tight">วงล้อสุ่มรายชื่อ</h1>
           <p class="text-slate-200/90 mt-2">เพิ่มรายชื่อ หมุนลุ้น </p>
         </div>
         <div class="inline-flex items-center gap-2 px-3 py-2 rounded-xl badge">
@@ -55,14 +55,14 @@
     </header>
 
     <!-- เลย์เอาต์หลัก -->
-    <main class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+    <main class="grid grid-cols-1 lg:grid-cols-2 gap-y-[98px] lg:gap-y-16 gap-x-[98px] lg:gap-x-[114px] items-start">
       <!-- ล้อและปุ่มควบคุมการหมุน -->
       <section class="relative">
         <div class="relative mx-auto w-full max-w-[560px] aspect-square">
           <div class="pointer"></div>
           <canvas id="wheel" width="800" height="800" class="w-full h-full rounded-full bg-slate-900/10"></canvas>
           <!-- แสดงผลชื่อที่หยุดได้ -->
-          <div id="resultBox" class="absolute -bottom-4 left-1/2 -translate-x-1/2 translate-y-full text-center">
+          <div id="resultBox" class="absolute -bottom-12 left-1/2 text-center" style="transform: translate(-50%, calc(100% + 40px));">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur border border-white/20">
               <span class="text-sm text-white/80">ผลลัพธ์</span>
               <strong id="resultName" class="text-white font-semibold">-</strong>
@@ -519,5 +519,5 @@
     updateButtonsState();
     showResult();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'982fdc70f30afd35',t:'MTc1ODUyMzc1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'982ffa93645efe84',t:'MTc1ODUyNDk4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
