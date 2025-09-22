@@ -1,150 +1,523 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ชื่อของคุณ] - Portfolio</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>วงล้อสุ่มรายชื่อ + ล็อคผลตามตำแหน่ง</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* พื้นหลังไล่สีให้สดใสและลึก */
+    body {
+      background: radial-gradient(1200px 600px at 70% -10%, #a78bfa 5%, #3b82f6 45%, #0ea5e9 80%, #0ea5e900 100%),
+                  linear-gradient(135deg, #0ea5e9 0%, #2563eb 50%, #7c3aed 100%);
+    }
+    /* เงาและความคมชัดของแคนวาส */
+    canvas { filter: drop-shadow(0 10px 24px rgba(0,0,0,0.35)); }
+    /* ปุ่ม toggle ล็อค */
+    .switch {
+      position: relative; width: 48px; height: 28px; display: inline-block;
+    }
+    .switch input { display: none; }
+    .slider {
+      position: absolute; cursor: pointer; inset: 0; background: #cbd5e1; border-radius: 9999px; transition: .25s;
+    }
+    .slider:before {
+      content: ""; position: absolute; height: 22px; width: 22px; left: 3px; top: 3px; background: white; border-radius: 9999px; transition: .25s;
+      box-shadow: 0 4px 10px rgba(0,0,0,.2);
+    }
+    input:checked + .slider { background: #22c55e; }
+    input:checked + .slider:before { transform: translateX(20px); }
+    /* ตัวชี้ (Pointer) ที่ด้านบนของล้อ */
+    .pointer {
+      position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-bottom: 20px solid #f8fafc;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+      z-index: 10;
+    }
+    /* แถบแจ้งสถานะ */
+    .badge { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); }
+  </style>
 </head>
-<body>
-
-    <nav>
-        <div class="container">
-            <div class="nav-logo">[ชื่อย่อของคุณ]</div>
-            <ul class="nav-links">
-                <li><a href="#about">เกี่ยวกับฉัน</a></li>
-                <li><a href="#experience">ประสบการณ์</a></li>
-                <li><a href="#projects">ผลงาน</a></li>
-                <li><a href="#contact">ติดต่อ</a></li>
-            </ul>
+<body class="min-h-screen text-slate-100 antialiased">
+  <div class="max-w-7xl mx-auto px-6 py-10">
+    <!-- ส่วนหัว -->
+    <header class="mb-8">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-bold tracking-tight">วงล้อสุ่มรายชื่อ</h1>
+          <p class="text-slate-200/90 mt-2">เพิ่มรายชื่อ หมุนลุ้น และเลือกล๊อคชื่อให้หยุดตรงตำแหน่งที่กำหนด</p>
         </div>
-    </nav>
-
-    <header id="home">
-        <div class="container">
-            <div class="hero-content">
-                <img src="https://via.placeholder.com/150" alt="รูปโปรไฟล์ของคุณ" class="profile-pic">
-                <h1>สวัสดี, ผม [ชื่อของคุณ]</h1>
-                <p class="subtitle">[ตำแหน่งงานของคุณ, เช่น Full-Stack Developer]</p>
-                <p class="tagline">[คำโปรยสั้นๆ เกี่ยวกับตัวคุณ เช่น: สร้างสรรค์โซลูชันดิจิทัลที่ตอบโจทย์และใช้งานง่าย]</p>
-                <div class="hero-buttons">
-                    <a href="#projects" class="btn btn-primary">ดูผลงานของฉัน</a>
-                    <a href="#contact" class="btn btn-secondary">ติดต่อฉัน</a>
-                </div>
-            </div>
+        <div class="inline-flex items-center gap-2 px-3 py-2 rounded-xl badge">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-sm">พร้อมใช้งาน • โต้ตอบได้จริง</span>
         </div>
+      </div>
     </header>
 
-    <main>
-        <section id="about" class="container">
-            <h2>เกี่ยวกับฉัน</h2>
-            <p>
-                [เล่าเรื่องราวเกี่ยวกับตัวคุณ ประสบการณ์ ความหลงใหลในการทำงาน และเป้าหมายในอาชีพของคุณที่นี่
-                เขียนให้น่าสนใจและแสดงความเป็นตัวของตัวเอง แต่ยังคงความเป็นมืออาชีพ]
-            </p>
-            <h3>ทักษะของฉัน (My Skills)</h3>
-            <div class="skills-grid">
-                <div class="skill-item"><i class="fab fa-html5"></i> HTML5</div>
-                <div class="skill-item"><i class="fab fa-css3-alt"></i> CSS3</div>
-                <div class="skill-item"><i class="fab fa-js-square"></i> JavaScript</div>
-                <div class="skill-item"><i class="fab fa-react"></i> React</div>
-                <div class="skill-item"><i class="fab fa-node-js"></i> Node.js</div>
-                <div class="skill-item"><i class="fab fa-python"></i> Python</div>
-                <div class="skill-item"><i class="fab fa-docker"></i> Docker</div>
-                <div class="skill-item"><i class="fas fa-database"></i> SQL</div>
+    <!-- เลย์เอาต์หลัก -->
+    <main class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      <!-- ล้อและปุ่มควบคุมการหมุน -->
+      <section class="relative">
+        <div class="relative mx-auto w-full max-w-[560px] aspect-square">
+          <div class="pointer"></div>
+          <canvas id="wheel" width="800" height="800" class="w-full h-full rounded-full bg-slate-900/10"></canvas>
+          <!-- แสดงผลชื่อที่หยุดได้ -->
+          <div id="resultBox" class="absolute -bottom-4 left-1/2 -translate-x-1/2 translate-y-full text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur border border-white/20">
+              <span class="text-sm text-white/80">ผลลัพธ์</span>
+              <strong id="resultName" class="text-white font-semibold">-</strong>
             </div>
-        </section>
-
-        <section id="experience" class="container">
-            <h2>ประสบการณ์การทำงาน</h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <h3>[ตำแหน่งงานล่าสุด]</h3>
-                        <p class="timeline-company">[ชื่อบริษัท] | [ปีเริ่มต้น] - [ปีสิ้นสุด หรือ ปัจจุบัน]</p>
-                        <ul>
-                            <li>[หน้าที่ความรับผิดชอบหลักข้อที่ 1]</li>
-                            <li>[หน้าที่ความรับผิดชอบหลักข้อที่ 2]</li>
-                            <li>[ความสำเร็จที่สำคัญ]</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <h3>[ตำแหน่งงานก่อนหน้า]</h3>
-                        <p class="timeline-company">[ชื่อบริษัท] | [ปีเริ่มต้น] - [ปีสิ้นสุด]</p>
-                         <ul>
-                            <li>[หน้าที่ความรับผิดชอบหลัก]</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="projects" class="container">
-            <h2>ผลงานเด่น</h2>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <img src="https://via.placeholder.com/400x250/1A1A1A/FFFFFF?text=Project+Image" alt="Project 1">
-                    <div class="project-info">
-                        <h3>ชื่อโปรเจกต์ที่ 1</h3>
-                        <p>คำอธิบายสั้นๆ เกี่ยวกับโปรเจกต์นี้ ว่ามันคืออะไรและแก้ปัญหาอะไร</p>
-                        <div class="project-tags">
-                            <span>React</span><span>Node.js</span><span>MongoDB</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" target="_blank">Live Demo <i class="fas fa-external-link-alt"></i></a>
-                            <a href="#" target="_blank">Source Code <i class="fab fa-github"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <img src="https://via.placeholder.com/400x250/1A1A1A/FFFFFF?text=Project+Image" alt="Project 2">
-                    <div class="project-info">
-                        <h3>ชื่อโปรเจกต์ที่ 2</h3>
-                        <p>คำอธิบายสั้นๆ เกี่ยวกับโปรเจกต์นี้ ว่ามันคืออะไรและแก้ปัญหาอะไร</p>
-                        <div class="project-tags">
-                            <span>Python</span><span>Flask</span><span>SQL</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" target="_blank">Live Demo <i class="fas fa-external-link-alt"></i></a>
-                            <a href="#" target="_blank">Source Code <i class="fab fa-github"></i></a>
-                        </div>
-                    </div>
-                </div>
-                 </div>
-        </section>
-        
-        <section id="contact" class="container">
-            <h2>สถานะและช่องทางการติดต่อ</h2>
-            <p class="availability">
-                <span class="status-indicator"></span> 
-                ปัจจุบันผมเปิดรับโอกาสและงานใหม่ๆ อยู่เสมอ
-            </p>
-            <p>
-                หากคุณมีโปรเจกต์ที่น่าสนใจ หรือต้องการพูดคุย สามารถติดต่อผมได้ผ่านช่องทางด้านล่างนี้
-                หรือนัดหมายเวลาผ่าน Calendly ของผมได้เลย
-            </p>
-            <div class="contact-links">
-                 <a href="mailto:[your.email@example.com]" class="contact-item"><i class="fas fa-envelope"></i> Email</a>
-                 <a href="[your-linkedin-url]" target="_blank" class="contact-item"><i class="fab fa-linkedin"></i> LinkedIn</a>
-                 <a href="[your-github-url]" target="_blank" class="contact-item"><i class="fab fa-github"></i> GitHub</a>
-                 <a href="[your-calendly-url]" target="_blank" class="btn btn-primary">นัดหมายเวลาคุย</a>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 [ชื่อของคุณ]. All Rights Reserved.</p>
+          </div>
         </div>
-    </footer>
 
-</body>
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <button id="spinBtn" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-[.98] transition font-semibold text-slate-900 shadow-lg shadow-emerald-900/20">
+            หมุนวงล้อ
+          </button>
+          <button id="resetBtn" class="px-5 py-3 rounded-xl bg-slate-100/10 hover:bg-slate-100/20 active:scale-[.98] transition font-semibold text-white backdrop-blur border border-white/20">
+            รีเซ็ตการหมุน
+          </button>
+        </div>
+      </section>
+
+      <!-- แผงควบคุมรายชื่อและการล็อค -->
+      <aside class="w-full">
+        <div class="rounded-2xl bg-white/10 backdrop-blur border border-white/20 p-5">
+          <!-- เพิ่มรายชื่อ -->
+          <form id="addForm" class="flex flex-col sm:flex-row gap-3">
+            <div class="flex-1">
+              <label for="nameInput" class="block text-sm mb-1 text-white/90">เพิ่มชื่อใหม่</label>
+              <input id="nameInput" type="text" placeholder="เช่น ตูน, เก๋, บอส"
+                class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-4 focus:ring-sky-300/50"/>
+            </div>
+            <div class="flex items-end">
+              <button class="px-5 py-3 rounded-xl bg-sky-400 hover:bg-sky-300 active:scale-[.98] transition font-semibold text-slate-900">
+                เพิ่มชื่อ
+              </button>
+            </div>
+          </form>
+
+          <!-- รายชื่อทั้งหมด -->
+          <div class="mt-5">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-semibold">รายชื่อ</h3>
+              <div class="text-xs text-white/70">
+                อย่างน้อย 2 ชื่อจึงจะหมุนได้
+              </div>
+            </div>
+            <ul id="nameList" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></ul>
+
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button id="shuffleBtn" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-sm">
+                สลับลำดับ
+              </button>
+              <button id="clearAllBtn" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-sm">
+                ลบทั้งหมด
+              </button>
+            </div>
+          </div>
+
+          <hr class="my-6 border-white/20"/>
+
+          <!-- การล็อคผล -->
+          <div class="space-y-4">
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <div class="font-semibold">ล็อคผลลัพธ์</div>
+                <p class="text-sm text-white/80">เลือกชื่อให้หยุดตรงตำแหน่งที่กำหนด</p>
+              </div>
+              <label class="switch">
+                <input id="lockToggle" type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm mb-1 text-white/90">เลือกล๊อคชื่อ</label>
+                <select id="lockName" class="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-900 focus:outline-none">
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm mb-1 text-white/90">ตำแหน่งหยุด</label>
+                <div class="grid grid-cols-4 gap-2">
+                  <button data-pos="top" class="posBtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-sm">บน</button>
+                  <button data-pos="right" class="posBtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-sm">ขวา</button>
+                  <button data-pos="bottom" class="posBtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-sm">ล่าง</button>
+                  <button data-pos="left" class="posBtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-sm">ซ้าย</button>
+                </div>
+                <p class="text-xs text-white/70 mt-2">ตำแหน่งคือจุดที่ชื่อจะไปหยุดตรงกับตัวชี้</p>
+              </div>
+            </div>
+
+            <div class="text-xs text-white/80">
+              เคล็ดลับ: เปิด “ล็อคผลลัพธ์” เลือกชื่อ แล้วกด “หมุนวงล้อ” เพื่อให้หยุดตรงตำแหน่งที่เลือก
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    // ข้อมูลและสถานะ
+    const wheel = document.getElementById('wheel');
+    const ctx = wheel.getContext('2d');
+    const spinBtn = document.getElementById('spinBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const addForm = document.getElementById('addForm');
+    const nameInput = document.getElementById('nameInput');
+    const nameList = document.getElementById('nameList');
+    const resultName = document.getElementById('resultName');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+
+    const lockToggle = document.getElementById('lockToggle');
+    const lockName = document.getElementById('lockName');
+    const posButtons = Array.from(document.querySelectorAll('.posBtn'));
+
+    // กำหนดตำแหน่งหยุด
+    const STOP_POS = { top: 0, right: Math.PI/2, bottom: Math.PI, left: -Math.PI/2 };
+    let selectedStopPos = 'top';
+
+    // สีสลับสวยๆ
+    const COLORS = ['#22c55e','#06b6d4','#0ea5e9','#6366f1','#f59e0b','#ef4444','#a78bfa','#10b981','#f97316','#e879f9','#14b8a6'];
+    let colorIndex = 0;
+    const nextColor = () => COLORS[(colorIndex++) % COLORS.length];
+
+    // รายชื่อเริ่มต้น
+    let entries = [
+      { id: crypto.randomUUID(), name: 'ตูน', color: nextColor() },
+      { id: crypto.randomUUID(), name: 'เก๋', color: nextColor() },
+      { id: crypto.randomUUID(), name: 'บอส', color: nextColor() },
+      { id: crypto.randomUUID(), name: 'มีน', color: nextColor() },
+    ];
+
+    // สถานะการหมุน
+    let rotation = 0; // เรเดียน
+    let animId = null;
+    let spinning = false;
+    let finalRotation = null; // เป้าหมายการหมุนแบบสัมบูรณ์
+    const pointerAngle = -Math.PI/2; // ตัวชี้อยู่บนสุด
+
+    // ฟังก์ชันช่วย
+    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+    const normAngle = (a) => {
+      let x = a % (Math.PI * 2);
+      return x < 0 ? x + Math.PI * 2 : x;
+    };
+
+    function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+
+    function renderEntriesList(){
+      nameList.innerHTML = '';
+      if(entries.length === 0){
+        nameList.innerHTML = '<li class="col-span-full text-center text-sm text-white/80 py-3">ยังไม่มีรายชื่อ</li>';
+      }
+      entries.forEach((e, idx) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between gap-3 px-3 py-2 rounded-xl bg-white/10 border border-white/20';
+        li.innerHTML = `
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="w-4 h-4 rounded-full" style="background:${e.color}"></span>
+            <span class="truncate">${idx+1}. ${e.name}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="px-2 py-1 text-xs rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 moveUp">ขึ้น</button>
+            <button class="px-2 py-1 text-xs rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 moveDown">ลง</button>
+            <button class="px-2 py-1 text-xs rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-100 border border-red-400/30 delete">ลบ</button>
+          </div>
+        `;
+        // events
+        li.querySelector('.delete').addEventListener('click', () => {
+          entries = entries.filter(x => x.id !== e.id);
+          if(lockName.value === e.id) lockName.value = '';
+          renderEntriesList(); syncLockOptions(); drawWheel(); updateButtonsState();
+        });
+        li.querySelector('.moveUp').addEventListener('click', () => {
+          const i = entries.findIndex(x => x.id === e.id);
+          if(i > 0){ [entries[i-1], entries[i]] = [entries[i], entries[i-1]]; renderEntriesList(); syncLockOptions(); drawWheel(); }
+        });
+        li.querySelector('.moveDown').addEventListener('click', () => {
+          const i = entries.findIndex(x => x.id === e.id);
+          if(i < entries.length-1){ [entries[i+1], entries[i]] = [entries[i], entries[i+1]]; renderEntriesList(); syncLockOptions(); drawWheel(); }
+        });
+        nameList.appendChild(li);
+      });
+    }
+
+    function syncLockOptions(){
+      lockName.innerHTML = '';
+      if(entries.length === 0){
+        const opt = document.createElement('option');
+        opt.value = ''; opt.textContent = '— ไม่มีรายชื่อ —';
+        lockName.appendChild(opt);
+      } else {
+        const opt0 = document.createElement('option');
+        opt0.value = ''; opt0.textContent = '— เลือกชื่อ —';
+        lockName.appendChild(opt0);
+        entries.forEach(e=>{
+          const opt = document.createElement('option');
+          opt.value = e.id; opt.textContent = e.name;
+          lockName.appendChild(opt);
+        });
+      }
+      lockName.disabled = !lockToggle.checked || entries.length === 0;
+      posButtons.forEach(btn => {
+        btn.disabled = !lockToggle.checked || entries.length === 0;
+        btn.classList.toggle('opacity-60', btn.disabled);
+      });
+    }
+
+    function updateButtonsState(){
+      const canSpin = entries.length >= 2 && !spinning;
+      spinBtn.disabled = !canSpin;
+      spinBtn.classList.toggle('opacity-60', !canSpin);
+    }
+
+    // วาดวงล้อ
+    function drawWheel(){
+      const w = wheel.width, h = wheel.height;
+      const cx = w/2, cy = h/2;
+      const r = Math.min(cx, cy) - 14;
+
+      ctx.clearRect(0,0,w,h);
+
+      // วาดพื้นหลังวงกลม
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      const n = entries.length || 1;
+      const base = (Math.PI * 2) / n;
+
+      for(let i=0;i<n;i++){
+        const start = i * base + rotation;
+        const end = start + base;
+
+        // ชิ้นส่วน
+        ctx.beginPath();
+        ctx.moveTo(0,0);
+        ctx.arc(0,0,r, start, end);
+        ctx.closePath();
+        ctx.fillStyle = entries[i]?.color || '#334155';
+        ctx.fill();
+
+        // เส้นแบ่งบางๆ
+        ctx.strokeStyle = 'rgba(255,255,255,.35)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0,0,r, start, end);
+        ctx.stroke();
+
+        // ข้อความ
+        const mid = (start + end)/2;
+        ctx.save();
+        ctx.rotate(mid);
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        // ปรับขนาดฟอนต์ตามองศาและรัศมี
+        const maxTextWidth = r * 0.75;
+        let fontSize = Math.min(28, Math.max(12, (r * base) / 6));
+        ctx.font = `bold ${fontSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
+        ctx.fillStyle = '#0f172a';
+        const label = entries[i]?.name || '-';
+        // ครอบข้อความไม่ให้ล้น
+        let toDraw = label;
+        while(ctx.measureText(toDraw).width > maxTextWidth && toDraw.length > 1){
+          toDraw = toDraw.slice(0, -1);
+        }
+        if(toDraw !== label) toDraw = toDraw.slice(0, -1) + '…';
+        ctx.fillText(toDraw, r - 14, 0);
+        ctx.restore();
+      }
+
+      // วงใน
+      ctx.beginPath();
+      ctx.arc(0,0, r*0.22, 0, Math.PI*2);
+      const grd = ctx.createRadialGradient(0,0, r*0.05, 0,0, r*0.25);
+      grd.addColorStop(0, 'rgba(255,255,255,0.95)');
+      grd.addColorStop(1, 'rgba(255,255,255,0.65)');
+      ctx.fillStyle = grd;
+      ctx.fill();
+
+      // เงานอกเล็กน้อย
+      ctx.beginPath();
+      ctx.arc(0,0, r+6, 0, Math.PI*2);
+      ctx.strokeStyle = 'rgba(0,0,0,.15)';
+      ctx.lineWidth = 8;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // คำนวณชื่อที่ชนะจากตำแหน่งตัวชี้
+    function getWinnerIndex(){
+      if(entries.length === 0) return -1;
+      const n = entries.length;
+      const base = (Math.PI * 2) / n;
+      const angleAtPointer = normAngle(pointerAngle - rotation); // มุมในกรอบวงล้อ
+      let idx = Math.floor(angleAtPointer / base);
+      idx = clamp(idx, 0, n-1);
+      return idx;
+    }
+
+    function showResult(){
+      const idx = getWinnerIndex();
+      const winner = entries[idx]?.name || '-';
+      resultName.textContent = winner;
+      // เอฟเฟกต์เล็กๆ
+      resultName.animate([
+        { transform: 'scale(1)', filter:'brightness(1)' },
+        { transform: 'scale(1.08)', filter:'brightness(1.5)' },
+        { transform: 'scale(1)', filter:'brightness(1)' },
+      ], { duration: 600, easing: 'ease-out' });
+    }
+
+    function calcEndRotationForIndex(index, posKey){
+      const n = entries.length;
+      const base = (Math.PI * 2) / n;
+      const desiredStopAngle = pointerAngle + (STOP_POS[posKey] || 0);
+      const target = desiredStopAngle - (index * base + base/2);
+      // ทำให้หมุนอย่างน้อยหลายรอบและไปข้างหน้า
+      const minSpins = 5;
+      const needOver = rotation + minSpins * Math.PI * 2;
+      const k = Math.ceil((needOver - target) / (Math.PI * 2));
+      return target + k * Math.PI * 2;
+    }
+
+    function calcEndRotationRandom(){
+      const n = entries.length;
+      const base = (Math.PI * 2) / n;
+      const idx = Math.floor(Math.random() * n);
+      const jitter = (Math.random() - 0.5) * base * 0.6;
+      const desiredStopAngle = pointerAngle; // หยุดบนสุดโดยค่าเริ่มต้น
+      const target = desiredStopAngle - (idx * base + base/2) + jitter;
+      const minSpins = 5;
+      const needOver = rotation + minSpins * Math.PI * 2;
+      const k = Math.ceil((needOver - target) / (Math.PI * 2));
+      return target + k * Math.PI * 2;
+    }
+
+    function animateTo(target){
+      if(spinning) cancelAnimationFrame(animId);
+      const start = rotation;
+      const total = target - start;
+      const duration = 6000 + Math.random()*1500; // 6-7.5s
+      const t0 = performance.now();
+      spinning = true;
+      updateButtonsState();
+
+      const step = (t)=>{
+        const p = clamp((t - t0) / duration, 0, 1);
+        const e = easeOutCubic(p);
+        rotation = start + total * e;
+        drawWheel();
+        if(p < 1){
+          animId = requestAnimationFrame(step);
+        }else{
+          spinning = false;
+          updateButtonsState();
+          drawWheel();
+          showResult();
+        }
+      };
+      animId = requestAnimationFrame(step);
+    }
+
+    // เหตุการณ์ UI
+    addForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const val = nameInput.value.trim();
+      if(!val) return;
+      entries.push({ id: crypto.randomUUID(), name: val, color: nextColor() });
+      nameInput.value = '';
+      renderEntriesList(); syncLockOptions(); drawWheel(); updateButtonsState();
+    });
+
+    shuffleBtn.addEventListener('click', ()=>{
+      for(let i=entries.length-1; i>0; i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [entries[i], entries[j]] = [entries[j], entries[i]];
+      }
+      renderEntriesList(); syncLockOptions(); drawWheel();
+    });
+
+    clearAllBtn.addEventListener('click', ()=>{
+      entries = [];
+      renderEntriesList(); syncLockOptions(); drawWheel(); updateButtonsState();
+      resultName.textContent = '-';
+    });
+
+    lockToggle.addEventListener('change', ()=>{
+      syncLockOptions();
+    });
+
+    lockName.addEventListener('change', ()=>{
+      // ไม่ต้องทำอะไรเพิ่ม แค่บันทึกค่า
+    });
+
+    posButtons.forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        selectedStopPos = btn.dataset.pos;
+        // ไฮไลต์ปุ่มที่ถูกเลือก
+        posButtons.forEach(b=>{
+          b.classList.remove('bg-white/30','border-white/40');
+        });
+        btn.classList.add('bg-white/30','border-white/40');
+      });
+    });
+    // ตั้งค่าเริ่มต้นให้ "บน"
+    (()=>{
+      const btnTop = posButtons.find(b=>b.dataset.pos==='top');
+      btnTop.classList.add('bg-white/30','border-white/40');
+    })();
+
+    spinBtn.addEventListener('click', ()=>{
+      if(spinning || entries.length < 2) return;
+
+      if(lockToggle.checked && lockName.value){
+        const idx = entries.findIndex(e => e.id === lockName.value);
+        if(idx >= 0){
+          finalRotation = calcEndRotationForIndex(idx, selectedStopPos);
+        }else{
+          finalRotation = calcEndRotationRandom();
+        }
+      }else{
+        finalRotation = calcEndRotationRandom();
+      }
+      animateTo(finalRotation);
+    });
+
+    resetBtn.addEventListener('click', ()=>{
+      if(spinning) { cancelAnimationFrame(animId); spinning = false; }
+      rotation = 0;
+      drawWheel();
+      resultName.textContent = '-';
+      updateButtonsState();
+    });
+
+    // ปรับขนาดแคนวาสสำหรับจอคมชัด
+    function fitCanvas(){
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = wheel.getBoundingClientRect();
+      wheel.width = Math.floor(rect.width * ratio);
+      wheel.height = Math.floor(rect.height * ratio);
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.scale(ratio, ratio);
+      drawWheel();
+    }
+    window.addEventListener('resize', fitCanvas);
+
+    // เริ่มต้น
+    renderEntriesList();
+    syncLockOptions();
+    // ตั้งค่า select ค่าเริ่มต้น
+    lockName.value = '';
+    // ฟิตแคนวาสครั้งแรก
+    fitCanvas();
+    updateButtonsState();
+    showResult();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'982fd65694fbfe18',t:'MTc1ODUyMzUwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
