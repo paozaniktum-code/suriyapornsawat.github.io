@@ -36,16 +36,69 @@
     }
     /* แถบแจ้งสถานะ */
     .badge { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); }
+
+    /* --- ✨ NEW: Styles for Winner Modal & Confetti --- */
+    .modal-overlay {
+        display: none; /* Hidden by default */
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(8px);
+        z-index: 99;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-overlay.visible {
+        display: flex;
+    }
+    .winner-modal {
+        background: radial-gradient(circle, #4a0e99, #330d6b);
+        border: 2px solid #a78bfa;
+        border-radius: 24px;
+        padding: 48px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        transform: scale(0.9);
+        opacity: 0;
+        animation: modal-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes modal-appear {
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    #winnerNamePopup {
+      animation: winner-name-fall 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.2s both;
+    }
+    @keyframes winner-name-fall {
+        from { transform: translateY(-80px) scale(0.8); opacity: 0; }
+        to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    /* Confetti Effect */
+    .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #f00;
+        opacity: 0;
+        top: -20px;
+        animation: confetti-fall 3s linear forwards;
+    }
+    @keyframes confetti-fall {
+        0% { transform: translateY(-20px) rotateZ(0deg); opacity: 1; }
+        100% { transform: translateY(120vh) rotateZ(720deg); opacity: 0; }
+    }
   </style>
 </head>
 <body class="min-h-screen text-slate-100 antialiased">
   <div class="max-w-7xl mx-auto px-6 py-10">
-    <!-- ส่วนหัว -->
     <header class="mb-8">
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <h1 class="text-3xl md:text-4xl font-bold tracking-tight">วงล้อสุ่มรายชื่อ</h1>
-          <p class="text-slate-200/90 mt-2">เพิ่มรายชื่อ หมุนลุ้น </p>
+          <p class="text-slate-200/90 mt-2">เพิ่มรายชื่อ หมุนลุ้น</p>
         </div>
         <div class="inline-flex items-center gap-2 px-3 py-2 rounded-xl badge">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -54,14 +107,11 @@
       </div>
     </header>
 
-    <!-- เลย์เอาต์หลัก -->
     <main class="grid grid-cols-1 lg:grid-cols-2 gap-y-[98px] lg:gap-y-16 gap-x-[98px] lg:gap-x-[114px] items-start">
-      <!-- ล้อและปุ่มควบคุมการหมุน -->
       <section class="relative">
         <div class="relative mx-auto w-full max-w-[560px] aspect-square">
           <div class="pointer"></div>
           <canvas id="wheel" width="800" height="800" class="w-full h-full rounded-full bg-slate-900/10"></canvas>
-          <!-- แสดงผลชื่อที่หยุดได้ -->
           <div id="resultBox" class="absolute -bottom-12 left-1/2 text-center" style="transform: translate(-50%, calc(100% + 40px));">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur border border-white/20">
               <span class="text-sm text-white/80">ผลลัพธ์</span>
@@ -80,10 +130,8 @@
         </div>
       </section>
 
-      <!-- แผงควบคุมรายชื่อและการล็อค -->
       <aside class="w-full">
         <div class="rounded-2xl bg-white/10 backdrop-blur border border-white/20 p-5">
-          <!-- เพิ่มรายชื่อ -->
           <form id="addForm" class="flex flex-col sm:flex-row gap-3">
             <div class="flex-1">
               <label for="nameInput" class="block text-sm mb-1 text-white/90">เพิ่มชื่อใหม่</label>
@@ -97,7 +145,6 @@
             </div>
           </form>
 
-          <!-- รายชื่อทั้งหมด -->
           <div class="mt-5">
             <div class="flex items-center justify-between mb-2">
               <h3 class="font-semibold">รายชื่อ</h3>
@@ -119,7 +166,6 @@
 
           <hr class="my-6 border-white/20"/>
 
-          <!-- การล็อคผล -->
           <div class="space-y-4">
             <div class="flex items-center justify-between gap-4">
               <div>
@@ -159,6 +205,20 @@
     </main>
   </div>
 
+  <div id="modalOverlay" class="modal-overlay">
+      <div id="winnerModal" class="winner-modal min-w-[300px] md:min-w-[500px]">
+          <div id="confettiContainer" class="absolute inset-0"></div>
+          <p class="text-2xl text-amber-300 font-semibold mb-2">ยินดีด้วย!</p>
+          <h2 id="winnerNamePopup" class="text-5xl md:text-7xl font-bold text-white tracking-tight break-words">
+              -
+          </h2>
+          <button id="closeModalBtn" class="mt-8 px-6 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-sm font-semibold">
+              ปิด
+          </button>
+      </div>
+  </div>
+
+
   <script>
     // ข้อมูลและสถานะ
     const wheel = document.getElementById('wheel');
@@ -175,6 +235,12 @@
     const lockToggle = document.getElementById('lockToggle');
     const lockName = document.getElementById('lockName');
     const posButtons = Array.from(document.querySelectorAll('.posBtn'));
+
+    // --- ✨ NEW: Modal elements
+    const modalOverlay = document.getElementById('modalOverlay');
+    const winnerNamePopup = document.getElementById('winnerNamePopup');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const confettiContainer = document.getElementById('confettiContainer');
 
     // กำหนดตำแหน่งหยุด
     const STOP_POS = { top: 0, right: Math.PI/2, bottom: Math.PI, left: -Math.PI/2 };
@@ -283,7 +349,6 @@
 
       ctx.clearRect(0,0,w,h);
 
-      // วาดพื้นหลังวงกลม
       ctx.save();
       ctx.translate(cx, cy);
 
@@ -315,13 +380,11 @@
         ctx.rotate(mid);
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
-        // ปรับขนาดฟอนต์ตามองศาและรัศมี
         const maxTextWidth = r * 0.75;
         let fontSize = Math.min(28, Math.max(12, (r * base) / 6));
         ctx.font = `bold ${fontSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
         ctx.fillStyle = '#0f172a';
         const label = entries[i]?.name || '-';
-        // ครอบข้อความไม่ให้ล้น
         let toDraw = label;
         while(ctx.measureText(toDraw).width > maxTextWidth && toDraw.length > 1){
           toDraw = toDraw.slice(0, -1);
@@ -331,7 +394,6 @@
         ctx.restore();
       }
 
-      // วงใน
       ctx.beginPath();
       ctx.arc(0,0, r*0.22, 0, Math.PI*2);
       const grd = ctx.createRadialGradient(0,0, r*0.05, 0,0, r*0.25);
@@ -340,7 +402,6 @@
       ctx.fillStyle = grd;
       ctx.fill();
 
-      // เงานอกเล็กน้อย
       ctx.beginPath();
       ctx.arc(0,0, r+6, 0, Math.PI*2);
       ctx.strokeStyle = 'rgba(0,0,0,.15)';
@@ -350,27 +411,52 @@
       ctx.restore();
     }
 
-    // คำนวณชื่อที่ชนะจากตำแหน่งตัวชี้
     function getWinnerIndex(){
       if(entries.length === 0) return -1;
       const n = entries.length;
       const base = (Math.PI * 2) / n;
-      const angleAtPointer = normAngle(pointerAngle - rotation); // มุมในกรอบวงล้อ
+      const angleAtPointer = normAngle(pointerAngle - rotation);
       let idx = Math.floor(angleAtPointer / base);
       idx = clamp(idx, 0, n-1);
       return idx;
     }
 
+    // --- ✨ UPDATED: Exciting result function ---
     function showResult(){
-      const idx = getWinnerIndex();
-      const winner = entries[idx]?.name || '-';
-      resultName.textContent = winner;
-      // เอฟเฟกต์เล็กๆ
-      resultName.animate([
-        { transform: 'scale(1)', filter:'brightness(1)' },
-        { transform: 'scale(1.08)', filter:'brightness(1.5)' },
-        { transform: 'scale(1)', filter:'brightness(1)' },
-      ], { duration: 600, easing: 'ease-out' });
+        const idx = getWinnerIndex();
+        const winner = entries[idx];
+        const winnerName = winner?.name || '-';
+
+        // Update small result text
+        resultName.textContent = winnerName;
+
+        // Show exciting modal
+        winnerNamePopup.textContent = winnerName;
+        // Adjust font size for very long names
+        if(winnerName.length > 10) {
+            winnerNamePopup.style.fontSize = '3.5rem';
+        } else {
+            winnerNamePopup.style.fontSize = '4.5rem';
+        }
+
+        modalOverlay.classList.add('visible');
+        triggerConfetti(winner?.color);
+    }
+
+    function triggerConfetti(baseColor) {
+        confettiContainer.innerHTML = '';
+        const confettiColors = [...COLORS];
+        if(baseColor) confettiColors.unshift(baseColor); // Prioritize winner's color
+
+        for(let i=0; i < 80; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            confetti.style.transform = `scale(${Math.random() * 1.2 + 0.8})`;
+            confettiContainer.appendChild(confetti);
+        }
     }
 
     function calcEndRotationForIndex(index, posKey){
@@ -378,7 +464,6 @@
       const base = (Math.PI * 2) / n;
       const desiredStopAngle = pointerAngle + (STOP_POS[posKey] || 0);
       const target = desiredStopAngle - (index * base + base/2);
-      // ทำให้หมุนอย่างน้อยหลายรอบและไปข้างหน้า
       const minSpins = 5;
       const needOver = rotation + minSpins * Math.PI * 2;
       const k = Math.ceil((needOver - target) / (Math.PI * 2));
@@ -390,7 +475,7 @@
       const base = (Math.PI * 2) / n;
       const idx = Math.floor(Math.random() * n);
       const jitter = (Math.random() - 0.5) * base * 0.6;
-      const desiredStopAngle = pointerAngle; // หยุดบนสุดโดยค่าเริ่มต้น
+      const desiredStopAngle = pointerAngle;
       const target = desiredStopAngle - (idx * base + base/2) + jitter;
       const minSpins = 5;
       const needOver = rotation + minSpins * Math.PI * 2;
@@ -402,7 +487,7 @@
       if(spinning) cancelAnimationFrame(animId);
       const start = rotation;
       const total = target - start;
-      const duration = 6000 + Math.random()*1500; // 6-7.5s
+      const duration = 6000 + Math.random()*1500;
       const t0 = performance.now();
       spinning = true;
       updateButtonsState();
@@ -452,22 +537,19 @@
       syncLockOptions();
     });
 
-    lockName.addEventListener('change', ()=>{
-      // ไม่ต้องทำอะไรเพิ่ม แค่บันทึกค่า
-    });
+    lockName.addEventListener('change', ()=>{});
 
     posButtons.forEach(btn=>{
       btn.addEventListener('click', (e)=>{
         e.preventDefault();
         selectedStopPos = btn.dataset.pos;
-        // ไฮไลต์ปุ่มที่ถูกเลือก
         posButtons.forEach(b=>{
           b.classList.remove('bg-white/30','border-white/40');
         });
         btn.classList.add('bg-white/30','border-white/40');
       });
     });
-    // ตั้งค่าเริ่มต้นให้ "บน"
+
     (()=>{
       const btnTop = posButtons.find(b=>b.dataset.pos==='top');
       btnTop.classList.add('bg-white/30','border-white/40');
@@ -497,6 +579,11 @@
       updateButtonsState();
     });
 
+    // --- ✨ NEW: Event listener for closing the modal
+    closeModalBtn.addEventListener('click', () => {
+        modalOverlay.classList.remove('visible');
+    });
+
     // ปรับขนาดแคนวาสสำหรับจอคมชัด
     function fitCanvas(){
       const ratio = Math.min(window.devicePixelRatio || 1, 2);
@@ -512,12 +599,9 @@
     // เริ่มต้น
     renderEntriesList();
     syncLockOptions();
-    // ตั้งค่า select ค่าเริ่มต้น
     lockName.value = '';
-    // ฟิตแคนวาสครั้งแรก
     fitCanvas();
     updateButtonsState();
-    showResult();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'982ffa93645efe84',t:'MTc1ODUyNDk4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
