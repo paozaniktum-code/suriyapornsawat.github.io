@@ -245,7 +245,7 @@
       let x = a % (Math.PI * 2);
       return x < 0 ? x + Math.PI * 2 : x;
     };
-    function easeOutQuint(t){ return 1 - Math.pow(1 - t, 3); }
+    function easeOutQuint(t){ return 1 - Math.pow(1 - t, 5); }
 
     function renderEntriesList(){
       nameList.innerHTML = '';
@@ -429,7 +429,7 @@
       if(spinning) cancelAnimationFrame(animId);
       const start = rotation;
       const total = target - start;
-      const duration = 6000 + Math.random()*1500;
+      const duration = 8000 + Math.random()*2000;
       const t0 = performance.now();
       spinning = true;
       updateButtonsState();
