@@ -418,7 +418,7 @@
       const base = (Math.PI * 2) / n;
       const idx = Math.floor(Math.random() * n);
       const jitter = (Math.random() - 0.5) * base * 0.9;
-      const target = pointerAngle - (idx * base + base/2) + jitter;
+      const target = desiredStopAngle - (index * base + base/2) + jitter;
       const minSpins = 5;
       const needOver = rotation + minSpins * Math.PI * 2;
       const k = Math.ceil((needOver - target) / (Math.PI * 2));
