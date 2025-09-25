@@ -306,7 +306,10 @@
     }
 
     function updateButtonsState(){
-      const canSpin = entries.length >= 2 && !spinning;
+      const hasEnoughEntries = entries.length >= 2;
+      const isNotSpinning = !spinning;
+       const lockConditionValid = !lockToggle.checked || (lockToggle.checked && lockName.value !== '');
+      const canSpin = hasEnoughEntries && isNotSpinning && lockConditionValid;
       spinBtn.disabled = !canSpin;
       spinBtn.classList.toggle('opacity-60', !canSpin);
     }
@@ -475,8 +478,8 @@
       resultName.textContent = '-';
     });
 
-    lockToggle.addEventListener('change', ()=>{ syncLockOptions(); });
-    lockName.addEventListener('change', ()=>{});
+    lockToggle.addEventListener('change', ()=>{ syncLockOptions(); updateButtonsState(); });
+    lockName.addEventListener('change', ()=>{ updateButtonsState();});
 
     posButtons.forEach(btn=>{
       btn.addEventListener('click', (e)=>{
