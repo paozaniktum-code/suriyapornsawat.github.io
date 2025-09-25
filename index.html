@@ -245,7 +245,7 @@
       let x = a % (Math.PI * 2);
       return x < 0 ? x + Math.PI * 2 : x;
     };
-    function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+    function easeOutQuint(t){ return 1 - Math.pow(1 - t, 3); }
 
     function renderEntriesList(){
       nameList.innerHTML = '';
@@ -437,7 +437,7 @@
 
       const step = (t)=>{
         const p = clamp((t - t0) / duration, 0, 1);
-        const e = easeOutCubic(p);
+        const e = easeOutQuint(p);
         rotation = start + total * e;
         drawWheel();
         if(p < 1){
